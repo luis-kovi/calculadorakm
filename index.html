@@ -134,20 +134,25 @@
 </head>
 <body>
   <div class="container" id="modalContainer">
+    <!-- Botão de fechar -->
     <div class="close-button" onclick="fecharModal()">
       <i class="fas fa-times"></i>
     </div>
 
+    <!-- Logotipo -->
     <div class="logo">
       <img src="https://i.ibb.co/zh6PNsYs/kovi-logo-fundo-rosa.png" alt="Logo Kovi" />
     </div>
 
+    <!-- Título -->
     <h2>Calculadora de Distância</h2>
 
+    <!-- Entrada de origem -->
     <label for="origem">Coordenadas de Origem</label>
     <input type="text" id="origem" placeholder="-23.188186,-46.894350" />
     <div id="enderecoOrigem"></div>
 
+    <!-- Seleção de destino -->
     <label for="destino">Unidade de Destino</label>
     <select id="destino">
       <option value="">Selecione...</option>
@@ -161,12 +166,15 @@
       <option value="-27.5984641,-48.6214476">Kovi Florianópolis</option>
     </select>
 
+    <!-- Botão de cálculo -->
     <button onclick="calcular()">Calcular</button>
 
+    <!-- Indicador de carregamento -->
     <div id="loading">
       <img src="https://www.teleinfotoday.com/wp-content/uploads/2018/10/loading.gif" alt="Carregando..." />
     </div>
 
+    <!-- Resultados -->
     <div id="result"></div>
   </div>
 
@@ -221,9 +229,9 @@
       }
     });
 
+    // Fecha o modal corretamente no ambiente do Google Apps Script
     function fecharModal() {
-      const modal = document.getElementById('modalContainer');
-      if (modal) modal.style.display = 'none';
+      google.script.host.close();
     }
   </script>
 </body>

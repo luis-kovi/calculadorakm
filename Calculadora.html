@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <base target="_top" />
+  <title>Calculadora de Distância</title>
+
+  <!-- Fonte Poppins ExtraBold -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome para ícones -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #FF355A;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .container {
+      position: relative;
+      background-color: #FF355A;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      padding: 30px 25px;
+      width: 100%;
+      max-width: 360px;
+      color: white;
+    }
+
+    .close-button {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 18px;
+      color: white;
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+
+    .close-button:hover {
+      transform: scale(1.2);
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .logo img {
+      max-height: 60px;
+    }
+
+    h2 {
+      text-align: center;
+      color: white;
+      font-size: 20px;
+      margin-bottom: 20px;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 800;
+    }
+
+    label {
+      font-weight: 600;
+      font-size: 13px;
+      margin-top: 14px;
+      display: block;
+      color: white;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+      font-size: 14px;
+      border: 1px solid #fff;
+      border-radius: 8px;
+      background-color: white;
+      color: #2C2C2C;
+      box-sizing: border-box;
+      transition: all 0.3s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: #fff;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+    }
+
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 12px;
+      background-color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      color: #FF355A;
+      font-size: 15px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #ffe6eb;
+    }
+
+    #result, #enderecoOrigem {
+      display: none;
+      margin-top: 20px;
+      padding: 12px;
+      background-color: #fff;
+      border-left: 5px solid #fff;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #2C2C2C;
+      word-wrap: break-word;
+    }
+
+    #loading {
+      text-align: center;
+      display: none;
+      margin-top: 20px;
+    }
+
+    #loading img {
+      width: 36px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="modalContainer">
+    <!-- Ícone de fechar -->
+    <div class="close-button" onclick="fecharModal()">
+      <i class="fas fa-times"></i>
+    </div>
+
+    <div class="logo">
+      <img src="https://i.ibb.co/zh6PNsYs/kovi-logo-fundo-rosa.png" alt="Logo Kovi" />
+    </div>
+
+    <h2>Calculadora de Distância</h2>
+
+    <label for="origem">Coordenadas de Origem</label>
+    <input type="text" id="origem" placeholder="-23.188186,-46.894350" />
+    <div id="enderecoOrigem"></div>
+
+    <label for="destino">Unidade de Destino</label>
+    <select id="destino">
+      <option value="">Selecione...</option>
+      <option value="-23.6713803,-46.706649">Kovi São Paulo (Jurubatuba)</option>
+      <option value="-29.9879565,-51.1660061">Kovi Porto Alegre</option>
+      <option value="-22.9310024,-47.081593">Kovi Campinas</option>
+      <option value="-23.9774346,-46.3120985">Kovi Santos</option>
+      <option value="-15.8313137,-48.0379609">Kovi Brasília</option>
+      <option value="-3.7946021,-38.4821463">Kovi Fortaleza</option>
+      <option value="-8.1290838,-34.9037255">Kovi Recife</option>
+      <option value="-27.5984641,-48.6214476">Kovi Florianópolis</option>
+    </select>
+
+    <button onclick="calcular()">Calcular</button>
+
+    <div id="loading">
+      <img src="https://www.teleinfotoday.com/wp-content/uploads/2018/10/loading.gif" alt="Carregando..." />
+    </div>
+
+    <div id="result"></div>
+  </div>
+
+  <script>
+    // ALTERADO: Função calcular() foi reescrita para usar fetch
+    function calcular() {
+      const origem = document.getElementById("origem").value;
+      const destino = document.getElementById("destino").value;
+      const resultDiv = document.getElementById("result");
+      const enderecoDiv = document.getElementById("enderecoOrigem");
+
+      // URL do seu Web App publicado no Google Apps Script
+      // ❗ IMPORTANTE: Substitua pela URL da sua implantação
+      const webAppUrl = 'https://script.google.com/macros/s/AKfycby2GNQtDNhAuH_e66A4PJxETKIXHiojHseCqfJfJuAycLbw7wZk2GgBAXTUHSUO5g/exec'; 
+
+      // Validação simples no frontend
+      if (!origem || !destino) {
+        resultDiv.innerHTML = "❌ Preencha todos os campos";
+        resultDiv.style.display = 'block';
+        return;
+      }
+
+      document.getElementById("loading").style.display = 'block';
+      resultDiv.style.display = 'none';
+      resultDiv.innerHTML = "";
+      enderecoDiv.style.display = 'none';
+      enderecoDiv.innerHTML = "";
+      
+      // Constrói a URL com os parâmetros
+      const params = new URLSearchParams({ origem: origem, destino: destino });
+      const urlComParams = `${webAppUrl}?${params.toString()}`;
+
+      // Usa fetch para chamar a API no Google Apps Script
+      fetch(urlComParams)
+        .then(response => {
+          if (!response.ok) {
+            throw new Error(`Erro na comunicação com o servidor: ${response.status}`);
+          }
+          return response.json(); // Converte a resposta para JSON
+        })
+        .then(res => { // Equivalente ao 'withSuccessHandler'
+          document.getElementById("loading").style.display = 'none';
+
+          if (res.endereco) {
+            enderecoDiv.innerHTML = `📍 <b>Origem:</b> ${res.endereco}`;
+            enderecoDiv.style.display = 'block';
+          }
+
+          if (res.error) {
+            resultDiv.innerHTML = res.error;
+          } else {
+            resultDiv.innerHTML = res.distanciaHtml;
+          }
+          resultDiv.style.display = 'block';
+        })
+        .catch(error => { // Equivalente ao 'withFailureHandler'
+          document.getElementById("loading").style.display = 'none';
+          resultDiv.innerHTML = "❌ Ocorreu um erro inesperado: " + error.message;
+          resultDiv.style.display = 'block';
+        });
+    }
+
+    // O resto do script pode continuar o mesmo
+    document.getElementById("origem").addEventListener("keyup", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        document.querySelector("button").click();
+      }
+    });
+
+    function fecharModal() {
+      // Como não está mais em um modal do Google, essa função pode ser removida
+      // ou usada para esconder o container se desejar.
+      const modal = document.getElementById('modalContainer');
+      if (modal) modal.style.display = 'none';
+    }
+  </script>
+</body>
+</html>

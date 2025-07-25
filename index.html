@@ -20,7 +20,6 @@
     }
 
     .container {
-      position: relative;
       background-color: #FF355A;
       border-radius: 20px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -29,20 +28,6 @@
       max-width: 360px;
       color: white;
       margin: auto;
-    }
-
-    .close-button {
-      position: absolute;
-      top: 15px;
-      right: 20px;
-      font-size: 18px;
-      color: white;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-
-    .close-button:hover {
-      transform: scale(1.2);
     }
 
     .logo {
@@ -134,10 +119,6 @@
 </head>
 <body>
   <div class="container" id="modalContainer">
-    <!-- Botão de fechar -->
-    <div class="close-button" onclick="fecharModal()">
-      <i class="fas fa-times"></i>
-    </div>
 
     <!-- Logotipo -->
     <div class="logo">
@@ -228,11 +209,6 @@
         document.querySelector("button").click();
       }
     });
-
-    // Fecha o modal corretamente no ambiente do Google Apps Script
-    function fecharModal() {
-      google.script.host.close();
-    }
   </script>
 </body>
 </html>

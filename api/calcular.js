@@ -2,8 +2,8 @@
 
 export default async function handler(request, response) {
   // --- Configurações ---
-  const franquia = 40; // km
-  const precoKmAdicional = 2.0; // R$
+  const franquia = 42; // km
+  const precoKmAdicional = 1.5; // R$
 
   // 🔑 As chaves de API agora vêm das "Environment Variables" da Vercel
   const routeToken = process.env.OPEN_ROUTE_TOKEN;

@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fluxograma Executivo - Sistema de Gestão de Dados</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            background: #f0f2f5;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: 0;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 300;
+            margin-bottom: 10px;
+            letter-spacing: -0.5px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            font-weight: 300;
+        }
+
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px 20px;
+        }
+
+        .flowchart-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            padding: 60px;
+            max-width: 1600px;
+            width: 100%;
+            position: relative;
+        }
+
+        .flowchart {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 40px;
+            position: relative;
+        }
+
+        .flow-column {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        .flow-stage {
+            background: white;
+            border: 2px solid #e1e4e8;
+            border-radius: 15px;
+            padding: 25px;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .flow-stage:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #2a5298;
+        }
+
+        .stage-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+        }
+
+        .stage-number {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .stage-title {
+            flex: 1;
+            font-size: 1.3em;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .stage-content {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .process-box {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            border-left: 4px solid #667eea;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .process-box:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+
+        .process-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.1), transparent);
+            transition: width 0.5s ease;
+        }
+
+        .process-box:hover::before {
+            width: 100%;
+        }
+
+        .process-name {
+            font-weight: 500;
+            color: #495057;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .process-details {
+            font-size: 0.9em;
+            color: #6c757d;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .tag-turno1 {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .tag-turno2 {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .tag-turno3 {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag-alert {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tag-info {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .connector {
+            position: absolute;
+            width: 40px;
+            height: 2px;
+            background: #dee2e6;
+            top: 50%;
+            right: -40px;
+            z-index: 1;
+        }
+
+        .connector::after {
+            content: '▶';
+            position: absolute;
+            right: -8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #dee2e6;
+            font-size: 16px;
+        }
+
+        .final-stage {
+            grid-column: span 4;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            text-align: center;
+            padding: 30px;
+            border-radius: 15px;
+            font-size: 1.4em;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(240, 147, 251, 0.3);
+        }
+
+        .metrics {
+            grid-column: span 4;
+            display: flex;
+            justify-content: space-around;
+            margin-top: 40px;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 15px;
+        }
+
+        .metric {
+            text-align: center;
+        }
+
+        .metric-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2a5298;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #6c757d;
+            font-size: 1.1em;
+        }
+
+        .icon {
+            width: 20px;
+            height: 20px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 1200px) {
+            .flowchart {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .final-stage {
+                grid-column: span 2;
+            }
+            .metrics {
+                grid-column: span 2;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .flowchart {
+                grid-template-columns: 1fr;
+            }
+            .final-stage {
+                grid-column: span 1;
+            }
+            .metrics {
+                grid-column: span 1;
+                flex-direction: column;
+                gap: 20px;
+            }
+            .connector {
+                display: none;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .flowchart-container {
+                box-shadow: none;
+            }
+            .header {
+                background: none;
+                color: #2c3e50;
+                border-bottom: 2px solid #dee2e6;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Sistema Integrado de Gestão de Dados</h1>
+        <p>Fluxo de Processamento e Controle de Qualidade</p>
+    </div>
+
+    <div class="main-container">
+        <div class="flowchart-container">
+            <div class="flowchart">
+                <!-- Coluna 1: Entrada de Dados -->
+                <div class="flow-column">
+                    <div class="flow-stage">
+                        <div class="connector"></div>
+                        <div class="stage-header">
+                            <div class="stage-number">1</div>
+                            <div class="stage-title">Entrada de Dados</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📊</span> Gestão Inicial
+                                </div>
+                                <div class="process-details">
+                                    <span>Planilha 36 caixas</span>
+                                    <span class="tag tag-info">Excel</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📝</span> Documentação
+                                </div>
+                                <div class="process-details">
+                                    <span>Inserção de Laudos</span>
+                                    <span class="tag tag-info">Manual</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🏢</span> Recepção
+                                </div>
+                                <div class="process-details">
+                                    <span>36 Laudos</span>
+                                    <span class="tag tag-info">Sistema</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="stage-header">
+                            <div class="stage-number">2</div>
+                            <div class="stage-title">Gestão de Perda Total</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>⚠️</span> Sistema de Perda
+                                </div>
+                                <div class="process-details">
+                                    <span>Controle Total</span>
+                                    <span class="tag tag-alert">Crítico</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 2: Processamento -->
+                <div class="flow-column">
+                    <div class="flow-stage">
+                        <div class="connector"></div>
+                        <div class="stage-header">
+                            <div class="stage-number">3</div>
+                            <div class="stage-title">Processamento</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🏥</span> Opder
+                                </div>
+                                <div class="process-details">
+                                    <span>Processamento</span>
+                                    <span class="tag tag-turno1">1° Turno</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>👩‍⚕️</span> Guiomar
+                                </div>
+                                <div class="process-details">
+                                    <span>Análise</span>
+                                    <span class="tag tag-turno2">2° Turno</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🏭</span> Cergimaq
+                                </div>
+                                <div class="process-details">
+                                    <span>Verificação</span>
+                                    <span class="tag tag-turno3">3° Turno</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="stage-header">
+                            <div class="stage-number">4</div>
+                            <div class="stage-title">Controle de Qualidade</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📋</span> Gestão de Filas
+                                </div>
+                                <div class="process-details">
+                                    <span>70 Laudos</span>
+                                    <span class="tag tag-info">Em fila</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🔬</span> Setor Microscópio
+                                </div>
+                                <div class="process-details">
+                                    <span>Análise detalhada</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>✅</span> Validação
+                                </div>
+                                <div class="process-details">
+                                    <span>Sem stock</span>
+                                    <span class="tag tag-alert">Positivo</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 3: Verificação -->
+                <div class="flow-column">
+                    <div class="flow-stage">
+                        <div class="connector"></div>
+                        <div class="stage-header">
+                            <div class="stage-number">5</div>
+                            <div class="stage-title">Verificação</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📊</span> Gemba
+                                </div>
+                                <div class="process-details">
+                                    <span>Protocolo</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📈</span> Estoque Natal
+                                </div>
+                                <div class="process-details">
+                                    <span>Protocolo especial</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🧬</span> Fenótipo
+                                </div>
+                                <div class="process-details">
+                                    <span>Análise genética</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="stage-header">
+                            <div class="stage-number">6</div>
+                            <div class="stage-title">Canais de Comunicação</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>💬</span> Condutor com Chat
+                                </div>
+                                <div class="process-details">
+                                    <span>Atendimento digital</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🚔</span> Infração de Trânsito
+                                </div>
+                                <div class="process-details">
+                                    <span>Registro</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🚗</span> Pneu Central
+                                </div>
+                                <div class="process-details">
+                                    <span>Serviços</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Coluna 4: Saída -->
+                <div class="flow-column">
+                    <div class="flow-stage">
+                        <div class="stage-header">
+                            <div class="stage-number">7</div>
+                            <div class="stage-title">Processamento Final</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🎓</span> Academia de Ciências
+                                </div>
+                                <div class="process-details">
+                                    <span>Análise técnica</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🚦</span> Restrição de Circulação
+                                </div>
+                                <div class="process-details">
+                                    <span>Controle</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📊</span> Análise de Tráfico
+                                </div>
+                                <div class="process-details">
+                                    <span>Estatísticas</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flow-stage">
+                        <div class="stage-header">
+                            <div class="stage-number">8</div>
+                            <div class="stage-title">Casos Especiais</div>
+                        </div>
+                        <div class="stage-content">
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>🚨</span> Questões Criminais
+                                </div>
+                                <div class="process-details">
+                                    <span class="tag tag-alert">Prioridade</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📝</span> Assinaturas
+                                </div>
+                                <div class="process-details">
+                                    <span>Validação</span>
+                                </div>
+                            </div>
+                            <div class="process-box">
+                                <div class="process-name">
+                                    <span>📌</span> Outros Motivos
+                                </div>
+                                <div class="process-details">
+                                    <span>Diversos</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Estágio Final -->
+                <div class="final-stage">
+                    🏁 Sistema de Perda Total - Conclusão do Processo
+                </div>
+
+                <!-- Métricas -->
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-value">36</div>
+                        <div class="metric-label">Caixas Processadas</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">70</div>
+                        <div class="metric-label">Laudos em Fila</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">3</div>
+                        <div class="metric-label">Turnos de Operação</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-value">8</div>
+                        <div class="metric-label">Etapas do Processo</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Animações de entrada
+        document.addEventListener('DOMContentLoaded', function() {
+            const stages = document.querySelectorAll('.flow-stage, .final-stage, .metric');
+            
+            stages.forEach((stage, index) => {
+                stage.style.opacity = '0';
+                stage.style.transform = 'scale(0.95)';
+                stage.style.transition = 'all 0.5s ease';
+                
+                setTimeout(() => {
+                    stage.style.opacity = '1';
+                    stage.style.transform = 'scale(1)';
+                }, index * 80);
+            });
+
+            // Efeito hover nos boxes
+            const processBoxes = document.querySelectorAll('.process-box');
+            processBoxes.forEach(box => {
+                box.addEventListener('click', function() {
+                    this.style.transform = 'scale(1.05)';
+                    setTimeout(() => {
+                        this.style.transform = 'translateX(5px)';
+                    }, 200);
+                });
+            });
+
+            // Contador animado para métricas
+            const animateValue = (element, start, end, duration) => {
+                let startTimestamp = null;
+                const step = (timestamp) => {
+                    if (!startTimestamp) startTimestamp = timestamp;
+                    const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                    element.innerHTML = Math.floor(progress * (end - start) + start);
+                    if (progress < 1) {
+                        window.requestAnimationFrame(step);
+                    }
+                };
+                window.requestAnimationFrame(step);
+            };
+
+            // Animar métricas quando entram em view
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const value = parseInt(entry.target.innerText);
+                        animateValue(entry.target, 0, value, 2000);
+                        observer.unobserve(entry.target);
+                    }
+                });
+            });
+
+            document.querySelectorAll('.metric-value').forEach(el => {
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>
